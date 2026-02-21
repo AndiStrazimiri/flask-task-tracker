@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h2>Welcome to Task Tracker</h2>
+
+<nav>
+    <a href="{{ url_for('tasks.list_tasks_page') }}">View Tasks</a>
+    <a href="{{ url_for('tasks.add_task') }}">Add New Task</a>
+</nav>
+{% endblock %}

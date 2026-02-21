@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Your Tasks{% endblock %}
+
+{% block content %}
+<h2>Your Tasks</h2>
+
+<form method="get" action="{{ url_for('tasks.list_tasks_page') }}">
+    <input type="text" name="search" placeholder="Search..." value="{{ request_args.get('search','') }}">
+    <select name="status">
+        <option value="">All</option>
+        <option value="Pending" {% if request_args.get('status')=='Pending' %}selected{% endif %}>Pending</option>
+        <option value="In Progress" {% if request_args.get('status')=='In Progress' %}selected{% endif %}>In Progress</option>
+        <option value="Done" {% if request_args.get('status')=='Done' %}selected{% endif %}>Done</option>
+    </select>
+    <button type="submit">Search</button>
+</form>
+
+<a href="{{ url_for('tasks.add_task') }}">+ Add New Task</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th><th>Title</th><th>Description</th><th>Status</th><th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for task in tasks %}
+        <tr>
+            <td>{{ task.id }}</td>
+            <td>{{ task.title }}</td>
+            <td>{{ task.description }}</td>
+            <td>{{ task.status }}</td>
+            <td>
+                <a href="{{ url_for('tasks.edit_task', task_id=task.id) }}">Edit</a>
+                <a href="{{ url_for('tasks.delete_task', task_id=task.id) }}" onclick="return confirm('Delete this task?')">Delete</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div class="pagination">
+    {% set total_pages = (pagination.total // pagination.per_page) + (1 if pagination.total % pagination.per_page else 0) %}
+    {% if pagination.page > 1 %}
+        <a href="{{ url_for('tasks.list_tasks_page', page=pagination.page-1, per_page=pagination.per_page, search=request_args.get('search',''), status=request_args.get('status','')) }}">Previous</a>
+    {% endif %}
+    <span>Page {{ pagination.page }} / {{ total_pages }}</span>
+    {% if pagination.page * pagination.per_page < pagination.total %}
+        <a href="{{ url_for('tasks.list_tasks_page', page=pagination.page+1, per_page=pagination.per_page, search=request_args.get('search',''), status=request_args.get('status','')) }}">Next</a>
+    {% endif %}
+</div>
+
+{% endblock %}
